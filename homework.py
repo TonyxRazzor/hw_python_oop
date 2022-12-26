@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import Dict, List, Union
 
 from dataclasses import dataclass, asdict
 
@@ -26,10 +26,6 @@ class Training:
     """Базовый класс тренировки."""
     LEN_STEP: float = 0.65
     M_IN_KM: float = 1000
-    CALORIES_MEAN_SPEED_MULTIPLIER: float = 18
-    CALORIES_MEAN_SPEED_SHIFT: float = 1.79
-    CALORIES_WEIGHT_MULTIPLIER: float = 0.035
-    CALORIES_SPEED_HEIGHT_MULTIPLIER: float = 0.029
     KMH_IN_MSEC: float = 0.278
     CM_IN_M: float = 100
     MIN_IN_H: float = 60
@@ -53,7 +49,7 @@ class Training:
 
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
-        None
+        NotImplementedError
 
     def show_training_info(self) -> InfoMessage:
         """Вернуть информационное сообщение о выполненной тренировке."""
@@ -89,7 +85,7 @@ class Running(Training):
 class SportsWalking(Training):
     """Тренировка: спортивная ходьба."""
     CALORIES_WEIGHT_MULTIPLIER = 0.035
-    CALORIES_SPEED_HEIGT_MULTIPLIER = 0.029
+    CALORIES_SPEED_HEIGHT_MULTIPLIER = 0.029
 
     def __init__(self, action: int,
                  duration: float,
@@ -108,7 +104,7 @@ class SportsWalking(Training):
                         / (self.height / self.CM_IN_M)
                     )
                 )
-                * self.CALORIES_SPEED_HEIGT_MULTIPLIER
+                * self.CALORIES_SPEED_HEIGHT_MULTIPLIER
                 * self.weight
             )
             * self.duration * self.MIN_IN_H
@@ -147,7 +143,7 @@ class Swimming(Training):
         )
 
 
-WORKOUTS = {
+WORKOUTS: Dict[str, type[Training]] = {
     'SWM': Swimming,
     'RUN': Running,
     'WLK': SportsWalking
@@ -159,9 +155,10 @@ def read_package(workout_type: str, data: List[Union[int, float]]) -> Training:
     if workout_type not in WORKOUTS:
         raise ValueError('Указанный вид тренировки не предусмотрен.')
     return WORKOUTS[workout_type](*data)
-# "Можно вынести строку не уровень модуля
-# и обрабатывать ее при помощи format()
-# уточняя проблемный код тренировки" - не понял как правильно прописать;))
+# "Тут вам нужно создать строку,
+# например ERROR_MESSAGE и обработать ее при помощи .format()
+# прямо внутри ValueError(ERROR_MESSAGE.format(аргументы_формата))"
+# - так и не получилось...
 
 
 def main(training: Training) -> None:
