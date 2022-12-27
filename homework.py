@@ -1,4 +1,4 @@
-from typing import Dict, List, Union
+from typing import Dict, Type, List, Union
 
 from dataclasses import dataclass, asdict
 
@@ -143,11 +143,15 @@ class Swimming(Training):
         )
 
 
-WORKOUTS: Dict[str, type[Training]] = {
+WORKOUTS: Dict[str, Type[Training]] = {
     'SWM': Swimming,
     'RUN': Running,
     'WLK': SportsWalking
 }
+# "Здесь типизация словаря нужна, вы ее зря убрали
+# можно просто аннотировать без использования модуля typing
+# конструкция dict[типключа, type[нашсозданныйкласстренировки]]"
+# - в таком случае автотест на Гит не проходит...
 
 
 def read_package(workout_type: str, data: List[Union[int, float]]) -> Training:
